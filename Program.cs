@@ -71,6 +71,9 @@ public class BestBinaryTree
         Root = node;
     }
 
+    #region Traversal Types
+
+    // In-Order (LNR) Left, Node, Right
     public void InOrderTraversal(Node node)
     {
         if (node == null)
@@ -82,6 +85,59 @@ public class BestBinaryTree
         Console.WriteLine(node.Data + " ");
         InOrderTraversal(node.Right);
     }
+
+    // Pre-Order (NLR) Node, Left, Right
+    public void PreOrderTraversal(Node node)
+    {
+        if (node == null)
+        {
+            return;
+        }
+
+        Console.WriteLine(node.Data + " ");
+        PreOrderTraversal(node.Left);
+        PreOrderTraversal(node.Right);
+    }
+
+    // Post-Order (LRN) Left, Right, Node
+    public void PostOrderTraversal(Node node)
+    {
+        if (node == null)
+        {
+            return;
+        }
+
+        PostOrderTraversal(node.Left);
+        PostOrderTraversal(node.Right);
+        Console.WriteLine(node.Data + " ");
+    }
+    // Level-Order Level by Level, left-right
+
+    public void LevelOrderTraversal(Node root)
+    {
+        if (root == null) return;
+
+        Queue<Node> queue = new Queue<Node>();
+        queue.Enqueue(root);
+
+        while (queue.Count > 0)
+        {
+            Node current = queue.Dequeue();
+            Console.WriteLine(current.Data + " ");
+
+            if (current.Left != null)
+            {
+                queue.Enqueue(current.Left);
+            }
+            if (current.Right != null)
+            {
+                queue.Enqueue(current.Right);
+            }
+        }
+    }
+
+    #endregion
+
     public void DescendingTraversal(Node node)
     {
         if (node == null)
@@ -89,40 +145,30 @@ public class BestBinaryTree
             return;
         }
 
-        DescendingTraversal(node.Right);
+        DescendingTraversal(node.Right!);
         Console.WriteLine(node.Data + " ");
-        DescendingTraversal(node.Left);
+        DescendingTraversal(node.Left!);
     }
 
-    public int GetHeightFrom(Node node, Direction direction, int count)
+    public int GetHeight(Node node)
     {
         if (node == null)
         {
-
-            return count;
+            return -1;
         }
 
-        switch (direction)
-        {
-            case Direction.Left:
-                return GetHeightFrom(node.Left, direction, ++count);
-            case Direction.Right:
-                return GetHeightFrom(node.Right, direction, ++count);
-            default:
-                return 0;
-        }
+        return Math.Max(GetHeight(node.Left!), GetHeight(node.Right!)) + 1;
     }
 
     public bool TreeIsBalanced()
     {
-        if (GetHeightFrom(Root, Direction.Left, 0) - GetHeightFrom(Root, Direction.Right, 0) <= 1 && GetHeightFrom(Root, Direction.Left, 0) - GetHeightFrom(Root, Direction.Right, 0) >= 1)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        int LeftHeight = GetHeight(Root!.Left!);
+        int RightHeight = GetHeight(Root.Right!);
+        Console.WriteLine($"Left: {LeftHeight}");
+        Console.WriteLine($"Right: {RightHeight}");
+
+        if (LeftHeight - RightHeight >= -1 && LeftHeight - RightHeight <= 1) return true;
+        return false;
     }
 }
 
@@ -130,40 +176,25 @@ class Program
 {
     static void Main()
     {
+        Console.Clear();
         BestBinaryTree tree = new BestBinaryTree();
-        // tree.Root = new Node(5);
-        // tree.Root.Left = new Node(3);
-        // tree.Root.Left.Left = new Node(2);
-        // tree.Root.Left.Right = new Node(4);
-        // tree.Root.Right = new Node(6);
-        // tree.Root.Right.Right = new Node(8);
-        // tree.Root.Right.Right.Left = new Node(7);
-        // tree.Root.Right.Right.Right = new Node(9);
 
         tree.InsertNode(5);
-        tree.InsertNode(3);
-        tree.InsertNode(2);
         tree.InsertNode(4);
+        tree.InsertNode(3);
         tree.InsertNode(6);
         tree.InsertNode(8);
         tree.InsertNode(7);
         tree.InsertNode(9);
-        tree.InsertNode(19);
+        tree.InsertNode(2);
 
-        tree.InOrderTraversal(tree.Root);
-        tree.DescendingTraversal(tree.Root);
+        tree.InOrderTraversal(tree.Root!);
+        tree.DescendingTraversal(tree.Root!);
 
-        int LeftHeight = tree.GetHeightFrom(tree.Root, Direction.Left, 0);
-        Console.WriteLine($"LeftCount: {LeftHeight}");
-        int RightHeight = tree.GetHeightFrom(tree.Root, Direction.Right, 0);
-        Console.WriteLine($"RightCount: {RightHeight}");
-
-        Console.WriteLine($"Tree is Balanced: {tree.TreeIsBalanced()}");
+        int height = tree.GetHeight(tree.Root!);
+        Console.WriteLine($"Height: {height}");
+        bool Balanced = tree.TreeIsBalanced();
+        Console.WriteLine($"Balanced: {Balanced}");
+        tree.LevelOrderTraversal(tree.Root!);
     }
-}
-
-public enum Direction
-{
-    Left,
-    Right
 }
