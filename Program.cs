@@ -49,13 +49,13 @@ public class BestBinaryTree
         Root = null;
     }
 
-    public Node FindMin(Node currentNode)
+    public int FindMin(Node currentNode)
     {
         while (currentNode.Left != null)
         {
             currentNode = currentNode.Left;
         }
-        return currentNode;
+        return currentNode.Data;
     }
     public Node FindMax(Node currentNode)
     {
@@ -170,7 +170,59 @@ public class BestBinaryTree
         if (LeftHeight - RightHeight >= -1 && LeftHeight - RightHeight <= 1) return true;
         return false;
     }
+
+    public Node Delete(int key)
+    {
+        return Delete(Root, key);
+    }
+    public Node Delete(Node currentNode, int key)
+    {
+        // Base case
+        if (currentNode == null)
+        {
+            return currentNode;
+        }
+
+        if (key < currentNode.Data)
+        {
+            currentNode.Left = Delete(currentNode.Left, key);
+        }
+        else if (key > currentNode.Data)
+        {
+            currentNode.Right = Delete(currentNode.Right, key);
+        }
+        else
+        {
+            // Node with one child or none
+            if (currentNode.Left == null)
+            {
+                return currentNode.Right;
+            }
+            else if (currentNode.Right == null)
+            {
+                return currentNode.Left;
+            }
+
+            // Node with two kids: get its successor; smallest in the right
+            currentNode.Data = FindMin(currentNode.Right);
+
+            currentNode.Right = Delete(currentNode.Right, currentNode.Data);
+        };
+        return currentNode;
+    }
 }
+
+#region  Deleting Nodes
+/*
+1. Leaf
+
+2. 1 leg
+
+3. 2 legs
+ - Smallest on the right
+ - Biggest on the left
+*/
+#endregion
 
 class Program
 {
