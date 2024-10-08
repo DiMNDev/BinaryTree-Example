@@ -209,20 +209,94 @@ public class BestBinaryTree
             currentNode.Right = Delete(currentNode.Right, currentNode.Data);
         };
         return currentNode;
+        #region  Deleting Nodes
+        /*
+        1. Leaf
+
+        2. 1 leg
+
+        3. 2 legs
+         - Smallest on the right
+         - Biggest on the left
+        */
+        #endregion
     }
+
+    #region Rotate
+    // While loop
+    // Is it balanced?
+    // If not balanced redo the balance
+    // Which side is taller? Which side to rotate?
+
+    public void RotateTree()
+    {
+        while (!TreeIsBalanced())
+        {
+            int leftHeight = GetHeight(Root.Left);
+            int rightHeight = GetHeight(Root.Right);
+
+            if (leftHeight - rightHeight < -1)
+            {
+                // Rotate Counter-Clockwise
+                Console.WriteLine("Rotate Counter Clockwise");
+                Node newLeft = Root;
+                Node newRoot = Root.Right;
+                Node newRight = Root.Left;
+
+                newRoot.Left = newLeft;
+                newRoot.Right = newRight;
+                Root = newRoot;
+            }
+            else if (rightHeight - leftHeight < -1)
+            {
+                // Rotate Clockwise
+                Console.WriteLine("Rotate Clockwise");
+                Node newLeft = Root.Right;
+                Node newRoot = Root.Left;
+                Node newRight = Root;
+
+                newRoot.Left = newLeft;
+                newRoot.Right = newRight;
+                Root = newRoot;
+            }
+
+        }
+    }
+    public void TreeBalancer()
+    {
+        bool keepBalancing = !TreeIsBalanced();
+        while (keepBalancing)
+        {
+            // which is tall side, which way to rotate?
+            int LeftNodeCount = GetHeight(Root.Left);
+            int RightNodeCount = GetHeight(Root.Right);
+
+
+            // right rotation
+            Node A = Root;
+            Node B = Root.Left;
+            Node E = Root.Left.Right;
+
+            Root = B;
+            B.Right = A;
+            A.Left = E;
+
+            // keep track of lefts sides child
+            // set the roots left child to now be the childs right child
+
+
+            if (TreeIsBalanced())
+            {
+                keepBalancing = false;
+            }
+        }
+    }
+    #endregion
+
+    #region Tree Balancer
+    #endregion
 }
 
-#region  Deleting Nodes
-/*
-1. Leaf
-
-2. 1 leg
-
-3. 2 legs
- - Smallest on the right
- - Biggest on the left
-*/
-#endregion
 
 class Program
 {
@@ -233,20 +307,34 @@ class Program
 
         tree.InsertNode(5);
         tree.InsertNode(4);
-        tree.InsertNode(3);
         tree.InsertNode(6);
+        tree.InsertNode(32);
+
+        tree.InsertNode(3);
         tree.InsertNode(8);
         tree.InsertNode(7);
         tree.InsertNode(9);
+        tree.InsertNode(13);
+        tree.InsertNode(19);
+        tree.InsertNode(1);
         tree.InsertNode(2);
 
         tree.InOrderTraversal(tree.Root!);
         tree.DescendingTraversal(tree.Root!);
-
         int height = tree.GetHeight(tree.Root!);
         Console.WriteLine($"Height: {height}");
         bool Balanced = tree.TreeIsBalanced();
         Console.WriteLine($"Balanced: {Balanced}");
         tree.LevelOrderTraversal(tree.Root!);
+
+        tree.RotateTree();
+        // tree.TreeBalancer();
+
+        height = tree.GetHeight(tree.Root!);
+        Console.WriteLine($"Height: {height}");
+        Balanced = tree.TreeIsBalanced();
+        Console.WriteLine($"Balanced: {Balanced}");
+        tree.LevelOrderTraversal(tree.Root!);
+        tree.DescendingTraversal(tree.Root!);
     }
 }
